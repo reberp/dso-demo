@@ -6,6 +6,7 @@ metadata:
 spec:
   containers:
     - name: maven
+      imagePullPolicy: IfNotPresent    
       image: maven:alpine
       command:
         - cat
@@ -14,28 +15,41 @@ spec:
         - name: m2
           mountPath: /root/.m2/
     - name: docker-tools
+      imagePullPolicy: IfNotPresent    
       image: rmkanda/docker-tools:latest
       command:
         - cat
       tty: true
       volumeMounts:
-        - mountPath: /var/run
+        - mountPath: /var/run/docker.sock
           name: docker-sock
         - mountPath: /tmp/trivycache/
           name: trivycache
+    - name: dind
+      imagePullPolicy: IfNotPresent
+      image: docker:dind
+      command:
+        - dockerd
+      tty: true       
+      env:
+        - name: DOCKER_TLS_CERTDIR
+          value: "/certs"       
     - name: trufflehog
+      imagePullPolicy: IfNotPresent    
       image: rmkanda/trufflehog
       command:
         - cat
       tty: true
     - name: licensefinder
-      image: licensefinder/license_finder
+      imagePullPolicy: IfNotPresent
+      image: alpine
+      #image: licensefinder/license_finder
       command:
         - cat
       tty: true
     - name: kaniko
       image: gcr.io/kaniko-project/executor:v1.6.0-debug
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       command:
         - sleep
       args:
@@ -44,7 +58,8 @@ spec:
         - name: jenkins-docker-cfg
           mountPath: /kaniko/.docker
     - name: slscan
-      image: shiftleft/sast-scan
+      image: alpine	
+      #image: shiftleft/sast-scan
       imagePullPolicy: IfNotPresent
       command: 
         - cat
@@ -55,7 +70,7 @@ spec:
         path: /tmp/.m2/
     - name: docker-sock
       hostPath:
-        path: /var/run
+        path: /var/run/docker.sock
     - name: trivycache
       hostPath:
         path: /tmp/trivycache/

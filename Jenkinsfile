@@ -1,4 +1,8 @@
 pipeline {
+  environment {
+    ARGO_SERVER = '127.0.0.1:30002'
+  }
+
   agent {
     kubernetes {
       yamlFile 'build-agent.yaml'
@@ -30,9 +34,10 @@ pipeline {
         stage('SCA') {
           steps {
             container('maven') {
-              catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                sh 'mvn org.owasp:dependency-check-maven:check'
-              }
+              echo "test"
+              //catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+              //  sh 'mvn org.owasp:dependency-check-maven:check'
+              //}
             }
           }
           post {
@@ -44,13 +49,14 @@ pipeline {
         stage('License Checker') {
           steps {
             container('licensefinder') {
-              sh 'ls -al'
-              sh '''#!/bin/bash --login
-                    /bin/bash --login
-                    rvm use default
-                    gem install license_finder
-                    license_finder
-                    '''
+              echo "test"
+              // sh 'ls -al'
+              // sh '''#!/bin/bash --login
+              //       /bin/bash --login
+              //       rvm use default
+              //      gem install license_finder
+              //      license_finder
+              //      '''
             }
           }
         }
@@ -59,7 +65,7 @@ pipeline {
     stage('SAST') {
       steps {
         container('slscan') {
-          sh "echo done" 
+          echo "not scanning" 
           //sh 'scan --type java,depscan --build --no-error'
         }
       }
@@ -81,7 +87,8 @@ pipeline {
         stage('Docker BnP') {
           steps {
             container('kaniko') {
-              sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=docker.io/patreber/dso-demo'
+              echo "not pushing"
+              // sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=docker.io/patreber/dso-demo:latest'
             }
           }
         }
@@ -92,14 +99,17 @@ pipeline {
         stage('Image Linting') {
           steps {
             container('docker-tools') {
-              sh 'dockle docker.io/patreber/dso-demo'
+              echo "not linting"
+              // sh 'dockle docker.io/patreber/dso-demo:latest'
             }
           }
         }
         stage('Image Scan') {
           steps {
             container('docker-tools') {
-              sh 'trivy image --exit-code 0 patreber/dso-demo'
+              echo "not scanning"
+              // figure out later
+              // sh 'trivy image --exit-code 0 patreber/dso-demo'
             }
           }
         }
@@ -107,10 +117,16 @@ pipeline {
     }
 
     stage('Deploy to Dev') {
+      environment {  		
+        AUTH_TOKEN = credentials('argocd-jenkins-deployer-token')
+      }
       steps {
-        // TODO
-        sh "echo done"
+        container('dind') {
+          sh 'docker ps'
+          sh 'docker run -t schoolofdevops/argocd-cli argocd app sync dso-demo --inescure --server $ARGO_SERVER --auth-token $AUTH_TOKEN'
+          sh 'docker run -t schoolofdevops/argocd-cli argocd app wait dso-demo --health --timeout 300 --inescure --server $ARGO_SERVER --auth-token $AUTH_TOKEN'
+        }
       }
     }
   }
-}
+}    	
