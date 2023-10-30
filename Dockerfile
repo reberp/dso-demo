@@ -20,7 +20,12 @@ RUN yum -y install shadow-utils
 RUN adduser -d /home/notroot notroot 
 RUN chown $USER:$USER /run/demo.jar
 RUN yum erase -y shadow-utils
+
+HEALTHCHECK --interval=30s --timeout=10s --retries=2 --start-period=20s \
+  CMD curl -f http://localhost:8080 || exit 1
+
 USER $USER
+
 
 
 CMD java  -jar /run/demo.jar
