@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: dso-demo
+  name: dso-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dso-demo
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: dso-demo
+    spec:
+      containers:
+      - image: docker.io/patreber/dso-demo
+        name: dso-demo
+        ports:
+        - containerPort: 8080
+        resources: {}
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: dso-demo-service
+  name: dso-demo-service
+spec:
+  ports:
+  - name: 8080-8080
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+    nodePort: 30003
+  selector:
+    app: dso-demo
+  type: NodePort
+status:
+  loadBalancer: {}
+
