@@ -86,21 +86,19 @@ pipeline {
         }
       }
     }
-    stage('Image Analysis'){
-      stage('Image Analysis') {
-        parallel {
-          stage('Image Linting') {
-            steps {
-              container('docker-tools') {
-                sh 'dockle docker.io/patreber/dso-demo'
-              }
+    stage('Image Analysis') {
+      parallel {
+        stage('Image Linting') {
+          steps {
+            container('docker-tools') {
+              sh 'dockle docker.io/patreber/dso-demo'
             }
           }
-          stage('Image Scan') {
-            steps {
-              container('docker-tools') {
-                sh 'trivy image --exit-code 1 patreber/dso-demo'
-              }
+        }
+        stage('Image Scan') {
+          steps {
+            container('docker-tools') {
+              sh 'trivy image --exit-code 1 patreber/dso-demo'
             }
           }
         }
