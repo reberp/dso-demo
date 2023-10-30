@@ -1,5 +1,11 @@
 ---
 - - :permit
+  - New BSD
+  - :who:
+    :why:
+    :versions: []
+    :when: 2020-05-31 15:29:03.621478000 Z
+- - :permit
   - MIT
   - :who: 
     :why: 
@@ -49,12 +55,6 @@
     :versions:
     - 1.2.6
     :when: 2020-05-31 15:29:03.621478000 Z
-- - :permit
-  - New BSD
-  - :who:
-    :why:
-    :versions: []
-    :when: 2020-09-29
 - - :approve
   - jakarta.xml.bind-api
   - :who: 
