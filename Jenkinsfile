@@ -1,6 +1,7 @@
 pipeline {
   environment {
     ARGO_SERVER = 'argocd-server2.argocd.svc:8080'
+    DEV_URL = 'dso-demo-service.dev.svc:8080'
   }
 
   agent {
