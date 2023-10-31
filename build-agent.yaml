@@ -28,6 +28,8 @@ spec:
     - name: dind
       imagePullPolicy: IfNotPresent
       image: docker:dind
+      securityContext:
+        privileged: true      
       command:
         - dockerd
       tty: true       

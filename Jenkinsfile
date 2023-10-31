@@ -1,6 +1,6 @@
 pipeline {
   environment {
-    ARGO_SERVER = '127.0.0.1:30002'
+    ARGO_SERVER = 'argocd-server2.argocd.svc:8080'
   }
 
   agent {
@@ -123,8 +123,8 @@ pipeline {
       steps {
         container('dind') {
           sh 'docker ps'
-          sh 'docker run -t schoolofdevops/argocd-cli argocd app sync dso-demo --inescure --server $ARGO_SERVER --auth-token $AUTH_TOKEN'
-          sh 'docker run -t schoolofdevops/argocd-cli argocd app wait dso-demo --health --timeout 300 --inescure --server $ARGO_SERVER --auth-token $AUTH_TOKEN'
+          sh 'docker run -t schoolofdevops/argocd-cli argocd app sync dso-demo --insecure --server $ARGO_SERVER --auth-token $AUTH_TOKEN'
+          sh 'docker run -t schoolofdevops/argocd-cli argocd app wait dso-demo --health --timeout 300 --insecure --server $ARGO_SERVER --auth-token $AUTH_TOKEN'
         }
       }
     }
