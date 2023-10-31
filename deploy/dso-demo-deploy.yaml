@@ -17,11 +17,22 @@ spec:
       labels:
         app: dso-demo
     spec:
+      automountServiceAccountToken: false
+      serviceAccountName: dso-demo    
       containers:
       - image: docker.io/patreber/dso-demo
         name: dso-demo
         ports:
         - containerPort: 8080
+        securityContext:
+          capabilities:
+            drop:
+              - ALL
+          privileged: false
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 11000
+          readOnlyRootFilesystem: true        
         resources: 
           requests:
             cpu: "50m"
@@ -29,5 +40,11 @@ spec:
           limits: 
             cpu: "50m"
             memory: "100Mi"
+        volumeMounts:
+          - name: tmp
+            mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}            
 status: {}
 
