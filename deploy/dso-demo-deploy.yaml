@@ -36,10 +36,10 @@ spec:
         resources: 
           requests:
             cpu: "50m"
-            memory: "100Mi"
+            memory: "200Mi"
           limits: 
             cpu: "50m"
-            memory: "100Mi"
+            memory: "200Mi"
         volumeMounts:
           - name: tmp
             mountPath: /tmp
